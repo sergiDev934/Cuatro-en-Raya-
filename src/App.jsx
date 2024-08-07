@@ -10,22 +10,21 @@ export function App() {
   const [turn, setTurn] = useState(TURNS.X);
   const [board, setBoard] = useState(Array(42).fill(null));
 
-  function checkDown(index) {
+  const checkDown = (index) => {
     if (board[index + 7] !== null) {
-      console.log(index);
-      return index;
+      const newBoard = board;
+      newBoard[index] = turn;
+      setBoard(newBoard);
     } else {
       checkDown(index + 7);
     }
-  }
+  };
 
   const updateBoard = (index) => {
     if (board[index]) return;
 
     //cambiar tablero
-    const newIndex = checkDown(index);
-    console.log(`Una vez salido de func el index es ${newIndex}`);
-    board[newIndex] = turn;
+    checkDown(index);
 
     // cambio de turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
