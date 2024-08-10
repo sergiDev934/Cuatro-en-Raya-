@@ -41,21 +41,32 @@ export function App() {
     }
   };
 
+  const resetGame = () => {
+    setTurn(TURNS.X);
+    setBoard(Array(20).fill(null));
+    setWinner(null);
+  };
+
   const checkWinner = () => {
+    let winnerPos = null;
     COMBO_WINS.map((combo) => {
       const [a, b, c, d] = combo;
       if (
+        board[a] !== null &&
         board[a] === board[b] &&
         board[a] === board[c] &&
         board[a] === board[d]
-      )
-        return board[a];
+      ) {
+        winnerPos = board[a];
+      }
     });
-    return null;
+    return winnerPos;
   };
 
+  const checkDraw = () => {};
+
   const updateBoard = (index) => {
-    if (board[index]) return;
+    if (board[index] || winner) return;
 
     //cambiar tablero
     checkDown(index);
@@ -63,7 +74,8 @@ export function App() {
     // comprobar ganador
     const posibleWinner = checkWinner();
     if (posibleWinner) setWinner(true);
-
+    // comprobar empate
+    posiblyDraw = checkDraw();
     // cambio de turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
@@ -82,9 +94,18 @@ export function App() {
       </div>
     );
   };
+
+  const modalFnc = () => {
+    let className = `noWin ${winner !== null ? "winModal" : ""}`;
+    return className;
+  };
+
   return (
     <main className="board">
       <h1>Cuatro En Raya</h1>
+      <button className="resetGame" onClick={resetGame}>
+        Start Again
+      </button>
       <section className="gameContainer">
         <div className="game">
           {board.map((_, index) => {
@@ -98,6 +119,17 @@ export function App() {
         <div className="turn">
           <Circle isSelected={turn === TURNS.X}>x</Circle>
           <Circle isSelected={turn === TURNS.O}>o</Circle>
+        </div>
+      </section>
+      <section className={modalFnc()}>
+        <div className="modal">
+          <h1>
+            {winner === false ? "It's a draw, nobody wins" : "The Winner is:"}
+          </h1>
+          <Circle>{turn === TURNS.X ? TURNS.O : TURNS.X}</Circle>
+          <button className="resetGame" onClick={resetGame}>
+            Reset the Game
+          </button>
         </div>
       </section>
     </main>

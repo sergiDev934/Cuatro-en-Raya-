@@ -16,12 +16,21 @@ body {
   margin: 0;
   height: 100vh;
 }
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 .gameContainer {
   width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+}
+.board > h1 {
+  margin: 0;
 }
 .game {
   display: grid;
@@ -47,7 +56,7 @@ body {
 .turn {
   display: flex;
   justify-content: center;
-  margin: 15px auto;
+  margin: 5px auto;
   width: fit-content;
   position: relative;
   border-radius: 10px;
@@ -57,4 +66,37 @@ body {
 .is-selected {
   color: #fff;
   background-color: #167dd1;
+}
+.noWin {
+  display: none;
+}
+.noWin.winModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000d4;
+}
+.modal {
+  width: 350px;
+  height: 370px;
+  background: #2c2929;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.resetGame {
+  cursor: pointer;
+  background-color: #242424;
+  border: 2px solid rgb(255, 255, 255);
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 10px 20px;
 }
