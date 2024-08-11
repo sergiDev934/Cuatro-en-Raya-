@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 
 const TURNS = {
@@ -63,7 +63,15 @@ export function App() {
     return winnerPos;
   };
 
-  const checkDraw = () => {};
+  const checkDraw = () => {
+    let posiblyDraw = true;
+    board.map((circle) => {
+      if (circle === null) {
+        posiblyDraw = false;
+      }
+    });
+    return posiblyDraw;
+  };
 
   const updateBoard = (index) => {
     if (board[index] || winner) return;
@@ -74,8 +82,12 @@ export function App() {
     // comprobar ganador
     const posibleWinner = checkWinner();
     if (posibleWinner) setWinner(true);
-    // comprobar empate
-    posiblyDraw = checkDraw();
+    else {
+      // comprobar empate
+      const posiblyDraw = checkDraw();
+      if (posiblyDraw) setWinner(false);
+    }
+
     // cambio de turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
@@ -126,7 +138,9 @@ export function App() {
           <h1>
             {winner === false ? "It's a draw, nobody wins" : "The Winner is:"}
           </h1>
-          <Circle>{turn === TURNS.X ? TURNS.O : TURNS.X}</Circle>
+          <Circle>
+            {winner ? (turn === TURNS.X ? TURNS.O : TURNS.X) : "-"}
+          </Circle>
           <button className="resetGame" onClick={resetGame}>
             Reset the Game
           </button>
