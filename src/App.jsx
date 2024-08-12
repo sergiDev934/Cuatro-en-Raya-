@@ -2,8 +2,8 @@ import { useState } from "react";
 import "./App.css";
 
 const TURNS = {
-  X: "x",
-  O: "o",
+  red: "red",
+  yellow: "yellow",
 };
 
 const COMBO_WINS = [
@@ -27,7 +27,7 @@ const COMBO_WINS = [
 ];
 
 export function App() {
-  const [turn, setTurn] = useState(TURNS.X);
+  const [turn, setTurn] = useState(TURNS.red);
   const [board, setBoard] = useState(Array(20).fill(null));
   const [winner, setWinner] = useState(null); //FALSE EMPATE
 
@@ -35,14 +35,13 @@ export function App() {
     if (board[index + 5] !== null) {
       const newBoard = board;
       newBoard[index] = turn;
-      setBoard(newBoard);
     } else {
       checkDown(index + 5);
     }
   };
 
   const resetGame = () => {
-    setTurn(TURNS.X);
+    setTurn(TURNS.red);
     setBoard(Array(20).fill(null));
     setWinner(null);
   };
@@ -89,7 +88,7 @@ export function App() {
     }
 
     // cambio de turno
-    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
+    const newTurn = turn === TURNS.red ? TURNS.yellow : TURNS.red;
     setTurn(newTurn);
 
     // console.log(`Ahora le toca a ${newTurn}`);
@@ -100,9 +99,19 @@ export function App() {
       updateBoard(index);
     };
     const className = `circle ${isSelected ? "is-selected" : ""}`;
+    const back = `insideCircle ${
+      children === null
+        ? ""
+        : children === "red"
+        ? "red"
+        : children === "yellow"
+        ? "yellow"
+        : ""
+    }`;
+
     return (
       <div className={className} onClick={handleClick}>
-        {children}
+        <div className={back}></div>
       </div>
     );
   };
@@ -129,8 +138,8 @@ export function App() {
           })}
         </div>
         <div className="turn">
-          <Circle isSelected={turn === TURNS.X}>x</Circle>
-          <Circle isSelected={turn === TURNS.O}>o</Circle>
+          <Circle isSelected={turn === TURNS.red}>red</Circle>
+          <Circle isSelected={turn === TURNS.yellow}>yellow</Circle>
         </div>
       </section>
       <section className={modalFnc()}>
@@ -139,7 +148,7 @@ export function App() {
             {winner === false ? "It's a draw, nobody wins" : "The Winner is:"}
           </h1>
           <Circle>
-            {winner ? (turn === TURNS.X ? TURNS.O : TURNS.X) : "-"}
+            {winner ? (turn === TURNS.red ? TURNS.yellow : TURNS.red) : "-"}
           </Circle>
           <button className="resetGame" onClick={resetGame}>
             Reset the Game
