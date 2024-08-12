@@ -1,34 +1,20 @@
 import { useState } from "react";
 import "./App.css";
-
-const TURNS = {
-  red: "red",
-  yellow: "yellow",
-};
-
-const COMBO_WINS = [
-  [0, 1, 2, 3],
-  [1, 2, 3, 4],
-  [5, 6, 7, 8],
-  [6, 7, 8, 9],
-  [10, 11, 12, 13],
-  [11, 12, 13, 14],
-  [15, 16, 17, 18],
-  [16, 17, 18, 19],
-  [0, 5, 10, 15],
-  [1, 6, 11, 16],
-  [2, 7, 12, 17],
-  [3, 8, 13, 18],
-  [4, 9, 14, 19],
-  [0, 6, 12, 18],
-  [1, 7, 13, 19],
-  [3, 7, 11, 15],
-  [4, 8, 12, 16],
-];
+import { TURNS } from "./constants.js";
+import { Circle } from "./components/circle.jsx";
+import { checkWinner, checkDraw } from "./logic/board.js";
 
 export function App() {
-  const [turn, setTurn] = useState(TURNS.red);
-  const [board, setBoard] = useState(Array(20).fill(null));
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem("board");
+    if (boardFromStorage) return JSON.parse(boardFromStorage);
+    return Array(20).fill(null);
+  });
+  const [turn, setTurn] = useState(() => {
+    const turnFromStorage = window.localStorage.getItem("turn");
+    if (turnFromStorage) return `${TURNS[turnFromStorage]}`;
+    return TURNS.red;
+  });
   const [winner, setWinner] = useState(null); //FALSE EMPATE
 
   const checkDown = (index) => {
@@ -40,38 +26,6 @@ export function App() {
     }
   };
 
-  const resetGame = () => {
-    setTurn(TURNS.red);
-    setBoard(Array(20).fill(null));
-    setWinner(null);
-  };
-
-  const checkWinner = () => {
-    let winnerPos = null;
-    COMBO_WINS.map((combo) => {
-      const [a, b, c, d] = combo;
-      if (
-        board[a] !== null &&
-        board[a] === board[b] &&
-        board[a] === board[c] &&
-        board[a] === board[d]
-      ) {
-        winnerPos = board[a];
-      }
-    });
-    return winnerPos;
-  };
-
-  const checkDraw = () => {
-    let posiblyDraw = true;
-    board.map((circle) => {
-      if (circle === null) {
-        posiblyDraw = false;
-      }
-    });
-    return posiblyDraw;
-  };
-
   const updateBoard = (index) => {
     if (board[index] || winner) return;
 
@@ -79,41 +33,30 @@ export function App() {
     checkDown(index);
 
     // comprobar ganador
-    const posibleWinner = checkWinner();
+    const posibleWinner = checkWinner(board);
     if (posibleWinner) setWinner(true);
     else {
       // comprobar empate
-      const posiblyDraw = checkDraw();
+      const posiblyDraw = checkDraw(board);
       if (posiblyDraw) setWinner(false);
     }
-
     // cambio de turno
     const newTurn = turn === TURNS.red ? TURNS.yellow : TURNS.red;
     setTurn(newTurn);
 
+    // Almacenar datos en el localStorage
+    window.localStorage.setItem("board", JSON.stringify(board));
+    window.localStorage.setItem("turn", newTurn);
+
     // console.log(`Ahora le toca a ${newTurn}`);
   };
 
-  const Circle = ({ children, index, updateBoard, isSelected }) => {
-    const handleClick = () => {
-      updateBoard(index);
-    };
-    const className = `circle ${isSelected ? "is-selected" : ""}`;
-    const back = `insideCircle ${
-      children === null
-        ? ""
-        : children === "red"
-        ? "red"
-        : children === "yellow"
-        ? "yellow"
-        : ""
-    }`;
-
-    return (
-      <div className={className} onClick={handleClick}>
-        <div className={back}></div>
-      </div>
-    );
+  const resetGame = () => {
+    setTurn(TURNS.red);
+    setBoard(Array(20).fill(null));
+    setWinner(null);
+    window.localStorage.removeItem("board");
+    window.localStorage.removeItem("turn");
   };
 
   const modalFnc = () => {
