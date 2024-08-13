@@ -8,7 +8,7 @@ export function App() {
   const [board, setBoard] = useState(() => {
     const boardFromStorage = window.localStorage.getItem("board");
     if (boardFromStorage) return JSON.parse(boardFromStorage);
-    return Array(20).fill(null);
+    return Array(42).fill(null);
   });
   const [turn, setTurn] = useState(() => {
     const turnFromStorage = window.localStorage.getItem("turn");
@@ -18,11 +18,11 @@ export function App() {
   const [winner, setWinner] = useState(null); //FALSE EMPATE
 
   const checkDown = (index) => {
-    if (board[index + 5] !== null) {
+    if (board[index + 7] !== null) {
       const newBoard = board;
       newBoard[index] = turn;
     } else {
-      checkDown(index + 5);
+      checkDown(index + 7);
     }
   };
 
@@ -53,7 +53,7 @@ export function App() {
 
   const resetGame = () => {
     setTurn(TURNS.red);
-    setBoard(Array(20).fill(null));
+    setBoard(Array(42).fill(null));
     setWinner(null);
     window.localStorage.removeItem("board");
     window.localStorage.removeItem("turn");
